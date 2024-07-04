@@ -204,7 +204,7 @@ class TTS(nn.Module):
         elapsed_time = end_time - start_time
 
         return jsonable_encoder({
-            "audio_base64": wav_base64,
+            "audioContent": wav_base64,
             "time_taken": elapsed_time
         })
 
