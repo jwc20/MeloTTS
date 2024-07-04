@@ -1,3 +1,6 @@
+venv/
+outputs/
+
 __pycache__/
 .ipynb_checkpoints/
 basetts_outputs_use_bert/
