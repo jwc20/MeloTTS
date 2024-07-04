@@ -8,7 +8,7 @@ from . import symbols
 from .english_utils.abbreviations import expand_abbreviations
 from .english_utils.time_norm import expand_time_english
 from .english_utils.number_norm import normalize_numbers
-from .japanese import distribute_phone
+# from .japanese import distribute_phone
 
 from transformers import AutoTokenizer
 
@@ -249,8 +249,8 @@ def g2p(text, pad_start_end=True, tokenized=None):
                     phones.append(ph)
                     tones.append(0)
                 phone_len += 1
-        aaa = distribute_phone(phone_len, word_len)
-        word2ph += aaa
+        # aaa = distribute_phone(phone_len, word_len)
+        # word2ph += aaa
     phones = [post_replace_ph(i) for i in phones]
 
     if pad_start_end:
