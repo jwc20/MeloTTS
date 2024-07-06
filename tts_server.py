@@ -1,6 +1,9 @@
+import os
+import sys
 import uvicorn
 from fastapi import FastAPI, Request
 from starlette.middleware.cors import CORSMiddleware
+import asyncio
 
 from melo.api import TTS
 
@@ -11,7 +14,7 @@ speaker_ids = model.hps.data.spk2id
 
 app = FastAPI()
 
-special_characters = """;:@#$%^&*-~※○●□■△▲◇◆▽▼→←↑↓↔↕↗↘↙↖↙↗↘↖↔↕─│┌┐└┘├┤┬┴┼━┃┏┓┗+"#$%&'()*+-/<=>?@[\\]^_`{|}~©®™•√π÷×¶∆£€¥₽₹"""
+special_characters = """;:@#$%^&*-~※○●□■△▲◇◆▽▼→←↑↓↔↕↗↘↙↖↙↗↘↖↔↕─│┌┐└┘├┤┬┴┼━┃┏┓┗+"#$%&'()*+-/<=>?@[\\]^`{|}~©®™•√π÷×¶∆£€¥₽₹"""
 
 # allowed_origins = [
 #     "http://localhost.tiangolo.com",
@@ -57,9 +60,15 @@ async def apifunction_generate_tts(request: Request):
             text = text.replace(c, "")
     text = text.replace("\n", " ")
 
-    response_data = model.tts_to_base64(text, speaker_ids["KR"], speed=speed)
+    loop = asyncio.get_event_loop()
+    response_data = await loop.run_in_executor(None, model.tts_to_base64, text, speaker_ids["KR"], speed)
     return response_data
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="127.0.0.1", port=5000, log_level="info")
+    # uvicorn.run("tts_server:app", host="127.0.0.1", port=8000, log_level="info")
+    
+    # mpiexec -n 2 python tts_server.py
+    
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else int(os.getenv('PORT', 8000))
+    uvicorn.run(app, host="127.0.0.1", port=port)
