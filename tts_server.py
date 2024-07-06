@@ -1,7 +1,8 @@
 import uvicorn
 from fastapi import FastAPI, Request
+
 # from fastapi.middleware.cors import CORSMiddleware
-from starlette.middleware.cors import CORSMiddleware 
+from starlette.middleware.cors import CORSMiddleware
 from pprint import pprint
 from melo.api import TTS
 import string
@@ -13,7 +14,7 @@ speaker_ids = model.hps.data.spk2id
 
 app = FastAPI()
 
-punc = ''';:@#$%^&*_-~※○●□■△▲◇◆▽▼→←↑↓↔↕↗↘↙↖↙↗↘↖↔↕─│┌┐└┘├┤┬┴┼━┃┏┓┗'''
+punc = """;:@#$%^&*-~※○●□■△▲◇◆▽▼→←↑↓↔↕↗↘↙↖↙↗↘↖↔↕─│┌┐└┘├┤┬┴┼━┃┏┓┗+"""
 
 # allowed_origins = [
 #     "http://localhost.tiangolo.com",
@@ -24,7 +25,7 @@ punc = ''';:@#$%^&*_-~※○●□■△▲◇◆▽▼→←↑↓↔↕↗↘�
 #     "https://localhost:44345",
 # ]
 
-allowed_origins=["*"]
+allowed_origins = ["*"]
 
 app.add_middleware(
     CORSMiddleware,
@@ -52,16 +53,18 @@ async def root():
 @app.post("/api/synthesize")
 async def apifunction_generate_tts(request: Request):
     _json = await request.json()
-    pprint(_json)
+    # pprint(_json)
     text = _json["text"]
-    print(text)
+    # print(text)
 
     for c in text:
         if c in punc:
             text = text.replace(c, "")
+
+    text = text.replace("\n", " ")
     
-    text = text.replace('\n', ' ')
-    
+    # print(text)
+
     response_data = model.tts_to_base64(text, speaker_ids["KR"], speed=speed)
     return response_data
 
